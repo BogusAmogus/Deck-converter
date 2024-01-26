@@ -1,0 +1,65 @@
+import os
+import re
+from collections import defaultdict
+from tkinter import Tk, Label, Button, filedialog, Text, END
+from tkinter.scrolledtext import ScrolledText
+
+def format_card_list(input_file_path, text_widget):
+    with open(input_file_path, 'r') as file:
+        lines = file.readlines()
+
+    counts_per_card = defaultdict(int)
+    first_card_name = None
+
+    for line in lines:
+        card_match = re.match(r'^(\d+)\s+(.+?)(?:\s*[\(\[0-9]|$)', line)
+        if card_match:
+            quantity = int(card_match.group(1))
+            card_name = card_match.group(2).strip(" ,[]")
+            counts_per_card[card_name] += quantity
+            if first_card_name is None:
+                first_card_name = card_name
+
+    formatted_cards = [f"{count} {card_name}" for card_name, count in counts_per_card.items()]
+    total_unique_cards = len(counts_per_card)
+    result_message = '\n'.join(formatted_cards) + f"\n\nTotal: {total_unique_cards} unique cards in the overall list"
+
+    # Clear the text widget and insert the formatted card list and total unique cards message
+    text_widget.delete('1.0', END)
+    text_widget.insert('1.0', result_message)
+
+    return formatted_cards, first_card_name
+
+def save_formatted_cards(formatted_cards, first_card_name):
+    output_file_name = f"{first_card_name.replace(' ', '_')}_formatted.txt"
+
+    suffix = 1
+    while os.path.exists(output_file_name):
+        output_file_name = f"{first_card_name.replace(' ', '_')}_{suffix}_formatted.txt"
+        suffix += 1
+
+    with open(output_file_name, 'w') as file:
+        file.write('\n'.join(formatted_cards))
+        file.write(f'\n\nTotal: {len(formatted_cards)} unique cards in the overall list')
+
+def select_input_file(text_widget):
+    file_path = filedialog.askopenfilename()
+    if file_path:
+        formatted_cards, first_card_name = format_card_list(file_path, text_widget)
+        save_formatted_cards(formatted_cards, first_card_name)
+
+def main():
+    root = Tk()
+    root.title("Card Formatter")
+
+    Label(root, text="Select the card list file:").pack()
+
+    Button(root, text="Choose File", command=lambda: select_input_file(text_display)).pack()
+
+    text_display = ScrolledText(root, height=20, width=60)
+    text_display.pack(padx=10, pady=10)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()

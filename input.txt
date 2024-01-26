@@ -1,4 +1,4 @@
-1 Edgar Markov
+1 Edgar Markov [C17]
 1 Clavileno, First of the Blessed (Showcase) [LCC]
 1 Elenda, the Dusk Rose [LCC]
 1 Swords to Plowshares [DMR]
@@ -89,4 +89,3 @@
 1 Cordial Vampire [MH1]
 1 Fellwar Stone [CMD]
 1 Talisman of Hierarchy [CLB]
-1 Edgar Markov [C17]
